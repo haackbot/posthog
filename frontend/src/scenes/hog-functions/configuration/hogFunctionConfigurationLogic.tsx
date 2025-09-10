@@ -285,7 +285,13 @@ export const hogFunctionConfigurationLogic = kea<hogFunctionConfigurationLogicTy
     props({} as HogFunctionConfigurationLogicProps),
     key(({ id, templateId, logicKey }: HogFunctionConfigurationLogicProps) => {
         const baseKey = id ?? templateId ?? 'new'
-        return logicKey ? `${logicKey}_${baseKey}` : baseKey
+        const withLogicKey = logicKey ? `${logicKey}_${baseKey}` : baseKey
+
+        if (router?.values?.hashParams?.configuration?.sub_template_id) {
+            return `${router.values.hashParams.configuration.sub_template_id}_${withLogicKey}`
+        }
+
+        return withLogicKey
     }),
     connect(({ id }: HogFunctionConfigurationLogicProps) => ({
         values: [

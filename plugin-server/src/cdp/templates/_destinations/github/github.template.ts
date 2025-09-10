@@ -13,8 +13,6 @@ export const template: HogFunctionTemplate = {
     code: `fun create_issue() {
     let owner := inputs.github_installation.account.name
     let repo := inputs.repository
-    let title := event.properties.name
-    let description := event.properties.description
     let posthog_issue_id := event.distinct_id
 
     if (not owner) {
@@ -23,14 +21,6 @@ export const template: HogFunctionTemplate = {
 
     if (not repo) {
         throw Error('Repository is required')
-    }
-
-    if (not title) {
-        throw Error('Issue title is required')
-    }
-
-    if (not description) {
-        throw Error('Issue description is required')
     }
 
     if (not posthog_issue_id) {
@@ -47,8 +37,8 @@ export const template: HogFunctionTemplate = {
             'User-Agent': 'PostHog Github App'
         },
         'body': {
-            'title': title,
-            'body': f'{description}\n\n[View in PostHog]({posthog_issue_url})'
+            'title': inputs.title,
+            'body': f'{inputs.description}\n\n[View in PostHog]({posthog_issue_url})'
         }
     }
 
@@ -78,6 +68,22 @@ create_issue();`,
             secret: false,
             hidden: false,
             required: true,
+        },
+        {
+            key: 'title',
+            type: 'string',
+            label: 'Title',
+            secret: false,
+            hidden: false,
+            default: '{event.properties.$exception_types[1]}',
+        },
+        {
+            key: 'description',
+            type: 'string',
+            label: 'Description',
+            secret: false,
+            hidden: false,
+            default: '{event.properties.$exception_values[1]}',
         },
     ],
 }

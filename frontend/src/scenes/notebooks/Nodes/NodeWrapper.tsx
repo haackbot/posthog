@@ -211,10 +211,13 @@ function NodeWrapper<T extends CustomNotebookNodeAttributes>(props: NodeWrapperP
                                     </>
                                 ) : (
                                     <>
-                                        <div className="NotebookNode__meta" data-drag-handle>
+                                        <div className="NotebookNode__meta">
                                             <div className="flex items-center flex-1 overflow-hidden">
                                                 {isDraggable && (
-                                                    <IconDragHandle className="cursor-move text-base shrink-0" />
+                                                    <IconDragHandle
+                                                        data-drag-handle
+                                                        className="cursor-move text-base shrink-0"
+                                                    />
                                                 )}
                                                 <NotebookNodeTitle />
                                             </div>

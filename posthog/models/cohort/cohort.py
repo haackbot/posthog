@@ -558,6 +558,22 @@ class Cohort(FileSystemSyncMixin, RootTeamMixin, models.Model):
                 logger.exception("Failed to save cohort state on retry", cohort_id=self.id, team_id=team_id)
                 # If both attempts fail, the cohort may remain in an inconsistent state
 
+    @property
+    def dependencies(self) -> models.QuerySet["Cohort"]:
+        """Return cohorts that this cohort depends on"""
+        from .dependencies import get_cohort_dependencies
+
+        dependency_ids = get_cohort_dependencies(self)
+        return Cohort.objects.filter(id__in=dependency_ids, team=self.team, deleted=False)
+
+    @property
+    def dependents(self) -> models.QuerySet["Cohort"]:
+        """Return cohorts that reference this cohort"""
+        from .dependencies import get_cohort_dependents
+
+        referencing_ids = get_cohort_dependents(self)
+        return Cohort.objects.filter(id__in=referencing_ids, team=self.team, deleted=False)
+
     __repr__ = sane_repr("id", "name", "last_calculation")
 
 
